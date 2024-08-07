@@ -1,0 +1,45 @@
+#!/usr/bin/python3
+
+import uuid
+from src.csv_manager import *
+from src.arguments import *
+
+args = arguments()
+
+csv_file_name = check_csv_file()
+
+entry_add = []
+entry_remove = None
+
+if args.add != None:
+    if args.add[1].lower() not in ["low","medium","high","critical"]:
+        print("Error: The priority value can only be 'Low','Medium','High','Critical'")
+        exit()
+
+    eid = str(uuid.uuid4()).split("-")[4]
+
+    entry_add.append(eid)
+
+    print(f"The ID for the new entry is: {eid}")
+
+    for _ in args.add:
+        entry_add.append(_)
+    entry_add.append("False")
+
+    write_entry(csv_file_name,entry_add)
+    entry_add = []
+
+if args.remove != None:
+    remove_entry(csv_file_name,args.remove[0])
+
+if args.check != None:
+    check_entry(csv_file_name,args.check[0])
+
+if args.modify != None:
+    modify_entry(csv_file_name,args.modify)
+
+if args.done != None:
+    modify_entry(csv_file_name,[args.done[0],"-","-","-","True"])
+
+if args.nuke != None:
+    clear_file(args.nuke[0])
